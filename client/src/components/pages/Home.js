@@ -10,7 +10,6 @@ function Home() {
   const [connected, setConnected] = useState(false);
   const [accountId, setAccountId] = useState(null);
   const [tradeDecision, setTradeDecision] = useState(null);
-  const [futuresAssets, setFuturesAssets] = useState([]);
   const [tradingPairs, setTradingPairs] = useState([]);
   const [orderType, setOrderType] = useState('market');
   const [selectedPair, setSelectedPair] = useState('KSMUSDT');
