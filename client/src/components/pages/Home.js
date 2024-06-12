@@ -22,7 +22,7 @@ function Home() {
   useEffect(() => {
     const fetchAccountInfo = async () => {
       try {
-        const response = await fetch('https://ts-trading-bot.vercel.app/api/usdt-balance', {
+        const response = await fetch('https://botweb3-server.vercel.app//api/usdt-balance', {
           headers: {
             'X-API-KEY': apiKey,
             'X-API-SECRET-KEY': apiSecretKey
@@ -41,7 +41,7 @@ function Home() {
 
     const fetchTradeDecision = async () => {
       try {
-        const response = await fetch(`https://ts-trading-bot.vercel.app/api/trade-decision?symbol=${selectedPair}`);
+        const response = await fetch(`https://botweb3-server.vercel.app/api/trade-decision?symbol=${selectedPair}`);
         if (!response.ok) {
           throw new Error('Failed to fetch trading decision');
         }
@@ -70,7 +70,7 @@ function Home() {
 
     const fetchHistoricalData = async () => {
       try {
-        const response = await fetch(`https://ts-trading-bot.vercel.app/api/historical-data/${selectedPair}`);
+        const response = await fetch(`https://botweb3-server.vercel.app/api/historical-data/${selectedPair}`);
         if (!response.ok) {
           throw new Error('Failed to fetch historical data');
         }
@@ -113,7 +113,7 @@ function Home() {
 
   const connectExchange = async () => {
     try {
-      const response = await fetch('https://ts-trading-bot.vercel.app/api/set-api-keys', {
+      const response = await fetch('https://botweb3-server.vercel.app/api/set-api-keys', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ function Home() {
 
   const executeTrade = async () => {
     try {
-        const response = await fetch('https://ts-trading-bot.vercel.app/api/execute-trade', {
+        const response = await fetch('https://botweb3-server.vercel.app/api/execute-trade', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
