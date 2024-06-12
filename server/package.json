@@ -1,12 +1,12 @@
 {
-  "name": "Binance bot",
+  "name": "binance-bot",
   "version": "1.0.0",
   "description": "Description of your project",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm i"
+    "build": "npm install"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
