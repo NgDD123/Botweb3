@@ -1,0 +1,38 @@
+.navbar {
+  width: 100%;
+  display: flex; /* Display the navbar items horizontally */
+  justify-content: space-between; /* Add space between the navbar items */
+  background-color: #a213db; /* Background color for the navbar */
+  padding: 10px; /* Add padding to the navbar */
+  height: 50px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar ul {
+  list-style-type: none; /* Remove default list styles */
+  display: flex; /* Display the list items horizontally */
+  padding: 0; /* Remove padding from the list */
+}
+
+.navbar ul li {
+  margin-right: 20px; /* Add space between list items */
+}
+
+.navbar ul li:last-child {
+  margin-right: 0; /* Remove margin from the last list item */
+}
+
+.navbar a {
+  color: white; /* Text color for the links */
+  text-decoration: none; /* Remove default underline */
+  font-weight: bold; /* Make the text bold */
+}
+
+.navbar a:hover {
+  text-decoration: underline; /* Underline links on hover */
+}
+
+
+
