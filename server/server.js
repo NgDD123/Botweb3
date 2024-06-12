@@ -778,7 +778,7 @@ app.post('/api/execute-trade', async (req, res) => {
             throw new Error('API key, secret, or symbol not provided');
         }
 
-        const decisionResponse = await fetch(`http://localhost:5000/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
+        const decisionResponse = await fetch(`https://ts-trading-bot.vercel.app/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
         if (!decisionResponse.ok) {
             throw new Error('Failed to fetch trading decision');
         }
@@ -832,7 +832,7 @@ async function scheduleJob() {
         }
 
         const { apiKey, apiSecretKey } = exchangeApiKeys['binancefutures'];
-        const decisionResponse = await fetch('http://localhost:5000/api/execute-trade', {
+        const decisionResponse = await fetch('https://ts-trading-bot.vercel.app/api/execute-trade', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -989,5 +989,5 @@ function monitorTrade(symbol, apiKey, apiSecretKey, decision, quantity, takeProf
 
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on ${port}`);
 });
