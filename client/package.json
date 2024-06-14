@@ -17,7 +17,8 @@
     "ws": "^8.16.0"
   },
   "scripts": {
-    "build": "CI=false react-scripts build",
+    "start": "react-scripts start",
+    "build": "cross-env CI=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
