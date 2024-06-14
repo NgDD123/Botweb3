@@ -15,6 +15,12 @@ app.use(cors());
 // Parse JSON bodies
 app.use(express.json());
 
+
+// Root route handler
+app.get('/', (req, res) => {
+    res.send('Welcome to the Trading Bot Server!');
+});
+
 /**
  * Store API keys for connected exchanges
  */
@@ -989,5 +995,5 @@ function monitorTrade(symbol, apiKey, apiSecretKey, decision, quantity, takeProf
 
 
 app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
+    console.log(`Server running at http://localhost:${port}`);
 });
