@@ -192,7 +192,7 @@ function Home() {
         </label>
         <label>
           <h2>API Secret Key:</h2>
-          <input type="password" value={apiSecretKey} onChange={(e) => setApiSecretKey(e.target.value)} placeholder="Enter API Secret Key" />
+          <input type="text" value={apiSecretKey} onChange={(e) => setApiSecretKey(e.target.value)} placeholder="Enter API Secret Key" />
         </label>
         <div className='exchangeType'>
           <label>
