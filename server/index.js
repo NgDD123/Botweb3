@@ -10,9 +10,7 @@ const app = express();
 const port = 5000;
 
 // Enable CORS
-app.use(cors({
- origin:"https://client-alpha-opal.vercel.app/"
-}));
+app.use(cors());
 
 // Parse JSON bodies
 app.use(express.json());
