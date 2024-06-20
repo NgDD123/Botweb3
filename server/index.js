@@ -5,22 +5,29 @@ const { SMA, StochasticRSI } = require('technicalindicators');
 require('dotenv').config();
 const cors = require('cors');
 const schedule = require('node-schedule');
-
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+
 const port = 5000;
 
 // Enable CORS
 app.use(cors());
 
+
 // Parse JSON bodies
 app.use(express.json());
 
-
-// Root route handler
-app.get('/', (req, res) => {
-    res.send('Welcome to the Trading Bot Server!');
-});
-
+// Middleware for logging requests (optional)
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
+  
+  // Basic route
+  app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to the Trading Bot Server!' });
+  });
 
 /**
  * Store API keys for connected exchanges
