@@ -22,7 +22,7 @@ function Home() {
   useEffect(() => {
     const fetchAccountInfo = async () => {
       try {
-        const response = await fetch('https://botweb3-server.vercel.app//api/usdt-balance', {
+        const response = await fetch('https://botweb3-server.vercel.app/api/usdt-balance', {
           headers: {
             'X-API-KEY': apiKey,
             'X-API-SECRET-KEY': apiSecretKey
@@ -113,7 +113,7 @@ function Home() {
 
   const connectExchange = async () => {
     try {
-      const response = await fetch('https://botweb3-server.vercel.app/api/set-api-keys', {
+      const response = await fetch('https://botweb3-server.vercel.app//api/set-api-keys', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ function Home() {
 
   const executeTrade = async () => {
     try {
-        const response = await fetch('https://botweb3-server.vercel.app/api/execute-trade', {
+        const response = await fetch('https://botweb3-server.vercel.app//api/execute-trade', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

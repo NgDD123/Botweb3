@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 const port = 5000;
 
 // Enable CORS
-app.use(cors());
+app.use(cors({ origin: 'https://client-f3xa9fvnv-david-pros-projects.vercel.app' }));
 
 
 // Parse JSON bodies
