@@ -12,11 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 const port = 5000;
 
 // Enable CORS
-app.use(cors({
-    origin: 'https://client-f3xa9fvnv-david-pros-projects.vercel.app',
-    methods: 'GET,POST,PUT,DELETE',
-    credentials: true
-  }));
+app.use(cors());
+
 
 // Parse JSON bodies
 app.use(express.json());
@@ -795,7 +792,7 @@ app.post('/api/execute-trade', async (req, res) => {
             throw new Error('API key, secret, or symbol not provided');
         }
 
-        const decisionResponse = await fetch(`https://botweb3-server.vercel.app/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
+        const decisionResponse = await fetch(`https://localhost:5000/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
         if (!decisionResponse.ok) {
             throw new Error('Failed to fetch trading decision');
         }
@@ -849,7 +846,7 @@ async function scheduleJob() {
         }
 
         const { apiKey, apiSecretKey } = exchangeApiKeys['binancefutures'];
-        const decisionResponse = await fetch('https://botweb3-server.vercel.app/api/execute-trade', {
+        const decisionResponse = await fetch('https://localhost:5000/api/execute-trade', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
