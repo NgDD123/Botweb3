@@ -792,7 +792,7 @@ app.post('/api/execute-trade', async (req, res) => {
             throw new Error('API key, secret, or symbol not provided');
         }
 
-        const decisionResponse = await fetch(`https://localhost:5000/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
+        const decisionResponse = await fetch(`https://botweb3.vercel.app/api/trade-decision?symbol=${symbol}`); // Pass symbol to the trade-decision endpoint
         if (!decisionResponse.ok) {
             throw new Error('Failed to fetch trading decision');
         }
@@ -846,7 +846,7 @@ async function scheduleJob() {
         }
 
         const { apiKey, apiSecretKey } = exchangeApiKeys['binancefutures'];
-        const decisionResponse = await fetch('https://localhost:5000/api/execute-trade', {
+        const decisionResponse = await fetch('https://botweb3.vercel.app/api/execute-trade', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
