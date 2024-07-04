@@ -1,6 +1,5 @@
-.App {
+.container {
   text-align: center;
-  background-image: url('assets/freedom.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -17,7 +16,7 @@
   color: white;
   font-family: 'Times New Roman', Times, serif;
   font-weight: 400;
-  font-size: 60px;
+  font-size: 80px;
 }
 
 .trading-bot-image {
@@ -63,10 +62,6 @@
   padding: 2px;
   flex-direction: column;
   width: 60%;
-  .Exchange{
-    background-color: blue;
-    color: white;
-  }
   .option{
     position: absolute;
     top: 280px;
@@ -94,7 +89,7 @@
   display: flex;
   padding: 2px;
   flex-direction: column;
-  .oders{
+  .orders{
     background-color: blue;
     color: white;
 

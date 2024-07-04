@@ -23,6 +23,9 @@ const Navbar = () => {
           <Link to="/">Home</Link>
         </li>
         <li>
+          <Link to="/Trade">Trade</Link>
+        </li>
+        <li>
           {/*<Link to="/contact">Contact</Link>*/}
         </li>
         <div className="navbar-options">
