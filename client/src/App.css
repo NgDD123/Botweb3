@@ -13,13 +13,6 @@
   color: white;
 }
 
-.botTitle {
-  color: white;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: 400;
-  font-size: 60px;
-}
-
 .trading-bot-image {
   position: absolute; /* Position the image absolutely */
   top: 50px; /* Align to the top */

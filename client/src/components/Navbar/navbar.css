@@ -2,7 +2,7 @@
   width: 100%;
   display: flex; /* Display the navbar items horizontally */
   justify-content: space-between; /* Add space between the navbar items */
-  background-color: #a213db; /* Background color for the navbar */
+  background-color: #db133e2a; /* Background color for the navbar */
   padding: 10px; /* Add padding to the navbar */
   height: 50px;
   position: sticky;
@@ -34,5 +34,17 @@
   text-decoration: underline; /* Underline links on hover */
 }
 
+.navbar-options {
+  display: flex;
+  align-items: center;
+}
 
+.nav-options {
+  cursor: pointer;
+}
+
+.nav-optionOne {
+  margin-right: 60rem;
+  padding: 0px;
+}
 

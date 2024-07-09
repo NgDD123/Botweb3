@@ -1,20 +1,26 @@
-import  { React } from 'react-router-dom';
-import './navbar.css';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-//import { auth } from '../../firebase';
-//import { onAuthStateChanged, signOut } from 'firebase/auth';
+import './navbar.css';
+import { auth } from '../../firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const Navbar = () => {
-  /*const [user, setUser] = useState({});
+  const [user, setUser] = useState({});
 
-  onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   const handleAuthentication = async () => {
     if (user) {
       signOut(auth);
     }
-  }; */
+  };
 
   return (
     <nav className='navbar'>
@@ -25,17 +31,19 @@ const Navbar = () => {
         <li>
           <Link to="/Trade">Trade</Link>
         </li>
+        {/*
         <li>
-          {/*<Link to="/contact">Contact</Link>*/}
+          <Link to="/contact">Contact</Link>
         </li>
+        */}
         <div className="navbar-options">
           <li>
-           {/* <Link to={!user ? '/login' : '/'}>
+            <Link to={!user ? '/login' : '/'}>
               <div onClick={handleAuthentication} className="nav-options">
-                <span className="nov-optionOne">{!user ? ' ' : user.email}</span>
-                <span className="nov-optionTwo">{user ? ' Sign Out' : ' Sign In'}</span>
+                <span className="nav-optionOne">{!user ? ' ' : user.email}</span>
+                <span className="nav-optionTwo">{user ? ' Sign Out' : ' Sign In'}</span>
               </div>
-  </Link>*/}
+            </Link>
           </li>
         </div>
       </ul>

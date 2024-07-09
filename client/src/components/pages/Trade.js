@@ -181,7 +181,7 @@ function Trade() {
   }, [tradeResult]);
 
   return (
-    <div className="App">
+    <div className="trade">
       <h1 className='botTitle'>FreeDom</h1>
       <div className='apiKey'>
         <label>
