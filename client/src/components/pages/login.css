@@ -4,7 +4,6 @@ login{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right: 0;
 }
 .login-logo{
     margin-top: 20px;

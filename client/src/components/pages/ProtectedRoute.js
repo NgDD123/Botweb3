@@ -1,15 +1,22 @@
+// src/components/pages/ProtectedRoute.js
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import './trade.css'
 
-const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+const ProtectedRoute = () => {
+  const { user, hasPaid } = useAuth();
+  const location = useLocation();
 
-  if (!user || user.email !== 'admin1@gmail.com') {
-    return <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
-  return children ? children : <Outlet />;
+  if (!hasPaid) {
+    return <Navigate to="/checkout" />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

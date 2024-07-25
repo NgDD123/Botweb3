@@ -31,11 +31,14 @@ const Navbar = () => {
         <li>
           <Link to="/Trade">Trade</Link>
         </li>
-        {/*
+        <li>
+          <Link to="/checkout">payment</Link>
+        </li>
+        
         <li>
           <Link to="/contact">Contact</Link>
         </li>
-        */}
+        
         <div className="navbar-options">
           <li>
             <Link to={!user ? '/login' : '/'}>

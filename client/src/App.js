@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
@@ -8,25 +7,32 @@ import Trade from './components/pages/Trade';
 import Login from './components/pages/Login';
 import { AuthProvider } from './components/pages/AuthContext';
 import ProtectedRoute from './components/pages/ProtectedRoute';
+import CheckoutPage from './components/pages/checkout/checkoutPage';
 import Contact from './components/pages/contact';
-
-
+import { StateProvider } from './components/pages/StateContext';
+import AdminDashboard from './components/pages/AdminDashboard';
+import UserDashboard from './components/pages/UserDashboard';
+import AdminProtectedRoute from './components/pages/AdminProtectedRoute';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} /> 
-            <Route path="/trade" element={<ProtectedRoute element={<Trade />} />} />
-            <Route path="/login" element={<Login />} />
-            
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </div>
-      </Router>
+      <StateProvider>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/trade" element={<ProtectedRoute element={<Trade />} />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/contact" element={<ProtectedRoute element={<Contact />} />} />
+              <Route path="/admin" element={<AdminProtectedRoute element={<AdminDashboard />} />} />
+              <Route path="/user" element={<ProtectedRoute element={<UserDashboard />} />} />
+            </Routes>
+          </div>
+        </Router>
+      </StateProvider>
     </AuthProvider>
   );
 }

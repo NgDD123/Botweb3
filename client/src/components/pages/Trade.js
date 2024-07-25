@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import './trade.css'
 
 function Trade() {
   const [accountInfo, setAccountInfo] = useState(null);

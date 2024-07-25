@@ -1,32 +1,35 @@
 import React, { useState } from 'react';
 import './login.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { auth } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from './AuthContext';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { signIn } = useAuth();
 
-  const signIn = async (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
-      if (user) {
-        navigate('/');
-      }
+      await signIn(email, password);
+      const from = location.state?.from?.pathname || '/';
+      navigate(from);
     } catch (error) {
       alert(error.message);
     }
   };
 
-  const register = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
       const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      if (user) {
+        navigate('/checkout', { state: { userId: user.user.uid } });
+      }
     } catch (error) {
       alert(error.message);
     }
@@ -42,14 +45,9 @@ function Login() {
           <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
           <h5>Password</h5>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-          <button onClick={signIn} type="submit" className="login-signInButton">
-            Sign In
-          </button>
+          <button onClick={handleSignIn} type="submit" className="login-signInButton">Sign In</button>
           <p>By signing in, you agree to the terms and conditions for freedmobot.</p>
-          <button onClick={register} className="login-registerButton">
-            Create Your Account
-          </button>
+          <button onClick={handleRegister} className="login-registerButton">Create Your Account</button>
         </form>
       </div>
     </div>
