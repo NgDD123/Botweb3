@@ -5,7 +5,6 @@ const { SMA, StochasticRSI } = require('technicalindicators');
 require('dotenv').config();
 const cors = require('cors');
 const schedule = require('node-schedule');
-const paymentRouter = require('./Routes/payment');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -15,22 +14,20 @@ const port = 5000;
 // Enable CORS
 app.use(cors());
 
+
 // Parse JSON bodies
 app.use(express.json());
-app.use('/payment', paymentRouter);
 
 // Middleware for logging requests (optional)
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
   });
-
   
   // Basic route
   app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the Trading Bot Server!' });
   });
-
 
 /**
  * Store API keys for connected exchanges
@@ -191,8 +188,22 @@ function identifyCandlestickPattern(data) {
         return 'threeWhiteSoldiers';
     }
 
-   
-    
+    // Doji Pattern
+    if (
+        Math.abs(currentCandle[1] - currentCandle[4]) <= (currentCandle[2] - currentCandle[3]) * 0.1 // Open and close are almost equal
+    ) {
+        return 'doji';
+    }
+
+    // Bullish Harami Pattern
+    if (
+        previousCandle[1] > previousCandle[4] && // Bearish candle
+        currentCandle[1] < currentCandle[4] && // Bullish candle
+        currentCandle[1] > previousCandle[4] && // Current open is higher than previous close
+        currentCandle[4] < previousCandle[1] // Current close is lower than previous open
+    ) {
+        return 'bullishHarami';
+    }
 
     // Rising Three Methods Pattern
     if (
@@ -206,7 +217,23 @@ function identifyCandlestickPattern(data) {
         return 'risingThreeMethods';
     }
 
-    
+    // Inverted Hammer Pattern
+    if (
+        currentCandle[1] > currentCandle[4] && 
+        (currentCandle[4] - currentCandle[3]) >= 2 * (currentCandle[1] - currentCandle[4]) &&
+        (currentCandle[1] - currentCandle[4]) <= (currentCandle[2] - currentCandle[1])
+    ) {
+        return 'invertedHammer';
+    }
+
+    // Dragonfly Doji Pattern
+    if (
+        Math.abs(currentCandle[1] - currentCandle[4]) <= (currentCandle[2] - currentCandle[3]) * 0.1 &&
+        (currentCandle[2] - currentCandle[1]) <= (currentCandle[1] - currentCandle[3]) * 0.1 &&
+        (currentCandle[1] - currentCandle[4]) <= (currentCandle[1] - currentCandle[3]) * 0.1
+    ) {
+        return 'dragonflyDoji';
+    }
 
     // Bearish Patterns
 
@@ -239,6 +266,16 @@ function identifyCandlestickPattern(data) {
         return 'eveningStar';
     }
 
+    // Dark Cloud Cover Pattern
+    if (
+        previousCandle[1] < previousCandle[4] && // Bullish candle
+        currentCandle[1] > currentCandle[4] && // Bearish candle
+        currentCandle[1] > previousCandle[4] && // Gap up
+        currentCandle[4] < previousCandle[4] - (previousCandle[1] - previousCandle[4]) / 2 // Closes below the midpoint of the previous candle
+    ) {
+        return 'darkCloudCover';
+    }
+
     // Three Black Crows Pattern
     if (
         thirdCandle && // Ensure there are enough candles
@@ -251,6 +288,15 @@ function identifyCandlestickPattern(data) {
         return 'threeBlackCrows';
     }
 
+    // Bearish Harami Pattern
+    if (
+        previousCandle[1] < previousCandle[4] && // Bullish candle
+        currentCandle[1] > currentCandle[4] && // Bearish candle
+        currentCandle[1] < previousCandle[4] && // Current open is lower than previous close
+        currentCandle[4] > previousCandle[1] // Current close is higher than previous open
+    ) {
+        return 'bearishHarami';
+    }
 
     // Falling Three Methods Pattern
     if (
@@ -262,6 +308,15 @@ function identifyCandlestickPattern(data) {
         currentCandle[4] < fourthCandle[4] // Close below the first bearish candle's close
     ) {
         return 'fallingThreeMethods';
+    }
+
+    // Gravestone Doji Pattern
+    if (
+        Math.abs(currentCandle[1] - currentCandle[4]) <= (currentCandle[2] - currentCandle[3]) * 0.1 &&
+        (currentCandle[2] - currentCandle[4]) <= (currentCandle[1] - currentCandle[3]) * 0.1 &&
+        (currentCandle[1] - currentCandle[4]) >= 2 * (currentCandle[4] - currentCandle[3])
+    ) {
+        return 'gravestoneDoji';
     }
 
     return 'noPattern';
@@ -407,11 +462,15 @@ const getTradeDecision = (
         // Decision based on Candlestick Patterns
 if (
     lastCandlestickPattern === 'bullishEngulfing' ||
+    lastCandlestickPattern === 'hammer' ||
     lastCandlestickPattern === 'morningStar' ||
     lastCandlestickPattern === 'piercingLine' ||
     lastCandlestickPattern === 'threeWhiteSoldiers' ||
-    lastCandlestickPattern === 'risingThreeMethods' 
-    
+    lastCandlestickPattern === 'doji' ||
+    lastCandlestickPattern === 'bullishHarami' ||
+    lastCandlestickPattern === 'risingThreeMethods' ||
+    lastCandlestickPattern === 'invertedHammer' ||
+    lastCandlestickPattern === 'dragonflyDoji'
 ) {
     buySignals++;
 }
@@ -420,8 +479,11 @@ if (
     lastCandlestickPattern === 'bearishEngulfing' ||
     lastCandlestickPattern === 'shootingStar' ||
     lastCandlestickPattern === 'eveningStar' ||
+    lastCandlestickPattern === 'darkCloudCover' ||
     lastCandlestickPattern === 'threeBlackCrows' ||
-    lastCandlestickPattern === 'fallingThreeMethods' 
+    lastCandlestickPattern === 'bearishHarami' ||
+    lastCandlestickPattern === 'fallingThreeMethods' ||
+    lastCandlestickPattern === 'gravestoneDoji'
 ) {
     sellSignals++;
 }
