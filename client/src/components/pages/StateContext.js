@@ -22,10 +22,29 @@ export const StateProvider = ({ children }) => {
     tradeResult: null,
     tradeResultVisible: false,
     symbol: '',
+    // Checkout Page states
+    amount: '',
+    message: '',
+    paymentId: '',
+    paymentStatus: '',
+    currency: 'BTC',
+    invoice: '',
+    custom: '',
+    ipnUrl: '',
+    successUrl: '',
+    cancelUrl: '',
+    userId: null,
   });
 
+  const setCheckoutState = (newState) => {
+    setState(prevState => ({
+      ...prevState,
+      ...newState
+    }));
+  };
+
   return (
-    <StateContext.Provider value={{ state, setState }}>
+    <StateContext.Provider value={{ state, setState, setCheckoutState }}>
       {children}
     </StateContext.Provider>
   );

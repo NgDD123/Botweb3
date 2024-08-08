@@ -1,22 +1,25 @@
-import React, { useState } from 'react';
+// CheckoutPage.js
+import React, { useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { StateContext } from '../StateContext';
 import './checkout.css';
 
 const CheckoutPage = () => {
-  const [amount, setAmount] = useState('');
-  const [message, setMessage] = useState('');
-  const [paymentId, setPaymentId] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState('');
-  const [currency, setCurrency] = useState('BTC');
-  const [invoice, setInvoice] = useState('');
-  const [custom, setCustom] = useState('');
-  const [ipnUrl, setIpnUrl] = useState('');
-  const [successUrl, setSuccessUrl] = useState('');
-  const [cancelUrl, setCancelUrl] = useState('');
+  const { state, setCheckoutState } = useContext(StateContext);
+  const {
+    amount,
+    message,
+    paymentId,
+    paymentStatus,
+    currency,
+    successUrl,
+    cancelUrl,
+    userId,
+  } = state;
+
   const location = useLocation();
   const navigate = useNavigate();
-  const userId = location.state?.userId;
 
   const MINIMUM_AMOUNT = 10;
   const BTC_ADDRESS = process.env.REACT_APP_BTC_RECEIVING_ADDRESS;
@@ -24,7 +27,7 @@ const CheckoutPage = () => {
 
   const handlePayment = async () => {
     if (amount < MINIMUM_AMOUNT) {
-      setMessage(`The minimum amount to pay is ${MINIMUM_AMOUNT}`);
+      setCheckoutState({ message: `The minimum amount to pay is ${MINIMUM_AMOUNT}` });
       return;
     }
 
@@ -35,31 +38,37 @@ const CheckoutPage = () => {
         currency1: currency,
         currency2: currency,
         address: getPaymentAddress(),
-        ipn_url: ipnUrl,
+        ipn_url: state.ipnUrl,
         success_url: successUrl,
         cancel_url: cancelUrl,
       });
-      setMessage(response.data.message);
-      setPaymentId(response.data.paymentId);
+      setCheckoutState({ 
+        message: response.data.message, 
+        paymentId: response.data.paymentId 
+      });
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Error initiating payment');
+      setCheckoutState({ 
+        message: error.response?.data?.error || 'Error initiating payment' 
+      });
     }
   };
 
   const checkPaymentStatus = async () => {
     if (!paymentId) {
-      setMessage('No payment ID to check');
+      setCheckoutState({ message: 'No payment ID to check' });
       return;
     }
 
     try {
       const response = await axios.get(`/api/payment-status/${paymentId}`);
-      setPaymentStatus(response.data.status);
+      setCheckoutState({ paymentStatus: response.data.status });
       if (response.data.status === 'PAID') {
         navigate('/');
       }
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Error checking payment status');
+      setCheckoutState({ 
+        message: error.response?.data?.error || 'Error checking payment status' 
+      });
     }
   };
 
@@ -77,7 +86,7 @@ const CheckoutPage = () => {
             <input
               type="number"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setCheckoutState({ amount: e.target.value })}
             />
           </label>
         </div>
@@ -94,7 +103,7 @@ const CheckoutPage = () => {
         <div>
           <label>
             Currency:
-            <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+            <select value={currency} onChange={(e) => setCheckoutState({ currency: e.target.value })}>
               <option value="BTC">BTC</option>
               <option value="USDT">USDT (Binance)</option>
             </select>
@@ -106,7 +115,7 @@ const CheckoutPage = () => {
             <input
               type="text"
               value={successUrl}
-              onChange={(e) => setSuccessUrl(e.target.value)}
+              onChange={(e) => setCheckoutState({ successUrl: e.target.value })}
             />
           </label>
         </div>
@@ -116,7 +125,7 @@ const CheckoutPage = () => {
             <input
               type="text"
               value={cancelUrl}
-              onChange={(e) => setCancelUrl(e.target.value)}
+              onChange={(e) => setCheckoutState({ cancelUrl: e.target.value })}
             />
           </label>
         </div>
