@@ -9,6 +9,11 @@ const CheckoutPage = () => {
   const [paymentId, setPaymentId] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('');
   const [currency, setCurrency] = useState('BTC');
+  const [invoice, setInvoice] = useState('');
+  const [custom, setCustom] = useState('');
+  const [ipnUrl, setIpnUrl] = useState('');
+  const [successUrl, setSuccessUrl] = useState('');
+  const [cancelUrl, setCancelUrl] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
   const userId = location.state?.userId;
@@ -24,7 +29,16 @@ const CheckoutPage = () => {
     }
 
     try {
-      const response = await axios.post('/api/process-payment', { amount, userId, currency });
+      const response = await axios.post('/api/process-payment', {
+        amount,
+        userId,
+        currency1: currency,
+        currency2: currency,
+        address: getPaymentAddress(),
+        ipn_url: ipnUrl,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+      });
       setMessage(response.data.message);
       setPaymentId(response.data.paymentId);
     } catch (error) {
@@ -84,6 +98,26 @@ const CheckoutPage = () => {
               <option value="BTC">BTC</option>
               <option value="USDT">USDT (Binance)</option>
             </select>
+          </label>
+        </div>
+        <div>
+          <label>
+            Success URL:
+            <input
+              type="text"
+              value={successUrl}
+              onChange={(e) => setSuccessUrl(e.target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Cancel URL:
+            <input
+              type="text"
+              value={cancelUrl}
+              onChange={(e) => setCancelUrl(e.target.value)}
+            />
           </label>
         </div>
         <button onClick={handlePayment}>Process Payment</button>

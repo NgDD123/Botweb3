@@ -1,5 +1,5 @@
 login{
-    height: 100vh;
+    min-height: 100vh;
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -15,6 +15,7 @@ login{
 .login-container{
     width: 300px;
     height: fit-content;
+    margin-left: 30rem;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -24,6 +25,7 @@ login{
 }
 .login-container > h1{
 font-weight: 500;
+
 margin-bottom: 20px;
 }
 .login-container > form > h5{

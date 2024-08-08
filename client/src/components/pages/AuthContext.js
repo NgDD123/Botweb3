@@ -10,12 +10,14 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [hasPaid, setHasPaid] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         checkPaymentStatus(currentUser.uid);
+        checkAdminStatus(currentUser.uid);
       }
     });
 
@@ -31,17 +33,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const checkAdminStatus = async (userId) => {
+    try {
+      const response = await axios.get(`/api/admin-status/${userId}`);
+      setIsAdmin(response.data.isAdmin);
+    } catch (error) {
+      console.error('Error checking admin status', error);
+    }
+  };
+
   const signIn = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       checkPaymentStatus(auth.currentUser.uid);
+      checkAdminStatus(auth.currentUser.uid);
     } catch (error) {
       console.error("Failed to sign in", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, hasPaid, signIn }}>
+    <AuthContext.Provider value={{ user, hasPaid, isAdmin, signIn }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import './navbar.css';
 import { auth } from '../../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-
+import { useAuth } from '../pages/AuthContext';
 const Navbar = () => {
   const [user, setUser] = useState({});
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -29,16 +30,26 @@ const Navbar = () => {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/Trade">Trade</Link>
+          <Link to="/trade">Trade</Link>
         </li>
         <li>
-          <Link to="/checkout">payment</Link>
+          <Link to="/checkout">Payment</Link>
         </li>
-        
         <li>
           <Link to="/contact">Contact</Link>
         </li>
-        
+        {user && (
+          <>
+            {isAdmin && (
+              <li>
+                <Link to="/admin">Admin Dashboard</Link>
+              </li>
+            )}
+            <li>
+              <Link to="/user">User Dashboard</Link>
+            </li>
+          </>
+        )}
         <div className="navbar-options">
           <li>
             <Link to={!user ? '/login' : '/'}>
