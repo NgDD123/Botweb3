@@ -1,7 +1,6 @@
-// CheckoutPage.js
 import React, { useContext } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { StateContext } from '../StateContext';
 import './checkout.css';
 
@@ -18,12 +17,11 @@ const CheckoutPage = () => {
     userId,
   } = state;
 
-  const location = useLocation();
   const navigate = useNavigate();
 
   const MINIMUM_AMOUNT = 10;
   const BTC_ADDRESS = process.env.REACT_APP_BTC_RECEIVING_ADDRESS;
-  const USDT_BINANCE_ADDRESS = process.env.REACT_APP_USDT_RECEIVING_ADDRESS;
+  const USDT_COINPAYMENTS_ADDRESS = process.env.REACT_APP_COINPAYMENTS_USDT_TRON_ADDRESS;
 
   const handlePayment = async () => {
     if (amount < MINIMUM_AMOUNT) {
@@ -47,9 +45,8 @@ const CheckoutPage = () => {
         paymentId: response.data.paymentId 
       });
     } catch (error) {
-      setCheckoutState({ 
-        message: error.response?.data?.error || 'Error initiating payment' 
-      });
+      const errorMessage = error.response?.data?.error || error.message || 'Error initiating payment';
+      setCheckoutState({ message: errorMessage });
     }
   };
 
@@ -62,18 +59,17 @@ const CheckoutPage = () => {
     try {
       const response = await axios.get(`/api/payment-status/${paymentId}`);
       setCheckoutState({ paymentStatus: response.data.status });
-      if (response.data.status === 'PAID') {
+      if (response.data.status === 'Complete') {
         navigate('/');
       }
     } catch (error) {
-      setCheckoutState({ 
-        message: error.response?.data?.error || 'Error checking payment status' 
-      });
+      const errorMessage = error.response?.data?.error || error.message || 'Error checking payment status';
+      setCheckoutState({ message: errorMessage });
     }
   };
 
   const getPaymentAddress = () => {
-    return currency === 'BTC' ? BTC_ADDRESS : USDT_BINANCE_ADDRESS;
+    return currency === 'BTC' ? BTC_ADDRESS : USDT_COINPAYMENTS_ADDRESS;
   };
 
   return (
@@ -105,7 +101,7 @@ const CheckoutPage = () => {
             Currency:
             <select value={currency} onChange={(e) => setCheckoutState({ currency: e.target.value })}>
               <option value="BTC">BTC</option>
-              <option value="USDT">USDT (Binance)</option>
+              <option value="USDT">USDT (TRON - CoinPayments)</option>
             </select>
           </label>
         </div>
