@@ -1,19 +1,24 @@
 const express = require('express');
 const axios = require('axios');
-const Binance = require('node-binance-api');
+const crypto = require('crypto');
+const qs = require('qs');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const router = express.Router();
 
-// Binance API setup
-const binance = new Binance().options({
-  APIKEY: process.env.BINANCE_API_KEY,
-  APISECRET: process.env.BINANCE_API_SECRET,
-  useServerTime: true,
-});
-
 // Payment processing route
 router.post('/process-payment', async (req, res) => {
-  const { amount, userId, currency } = req.body;
+  const {
+    amount,
+    userId,
+    currency1,
+    currency2,
+    address,
+    ipn_url,
+    success_url,
+    cancel_url,
+  } = req.body;
 
   try {
     // Validate amount and currency
@@ -26,64 +31,47 @@ router.post('/process-payment', async (req, res) => {
       return res.status(400).json({ error: 'User ID not provided' });
     }
 
-    // Process payment logic based on currency
-    let paymentId, transactionHash;
+    // Prepare the payload for CoinPayments API
+    const payload = {
+      amount: parsedAmount,
+      currency1,
+      currency2,
+      address,
+      ipn_url,
+      success_url,
+      cancel_url,
+      cmd: 'create_transaction',
+      key: process.env.COINPAY_API_KEY,
+      version: 1,
+    };
 
-    if (currency === 'BTC') {
-      // Example: BTC payment processing
-      const btcAddress = process.env.BTC_RECEIVING_ADDRESS; // Your BTC receiving address
+    // Convert payload to URL-encoded string
+    const payloadString = qs.stringify(payload);
 
-      // Create CoinPay payment request
-      const response = await axios.post('https://api.coinpay.com/v1/payments', {
-        amount: parsedAmount,
-        currency: 'BTC',
-        address: btcAddress,
-        userId: userId,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${process.env.COINPAY_API_KEY}`,
-        }
-      });
+    // Generate HMAC signature
+    const hmac = crypto.createHmac('sha512', process.env.COINPAY_API_SECRET);
+    hmac.update(payloadString);
+    const signature = hmac.digest('hex');
 
-      const paymentRequest = response.data;
-      paymentId = paymentRequest.id;
-      transactionHash = paymentRequest.txHash;
+    // Process payment with CoinPayments
+    const response = await axios.post('https://www.coinpayments.net/api.php', payloadString, {
+      headers: {
+        'HMAC': signature,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }
+    });
 
-      // For demo, simulate transaction sending
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate transaction time
-
-    } else if (currency === 'USDT') {
-      // Example: USDT (BEP20) payment processing
-      const usdtAddress = process.env.USDT_RECEIVING_ADDRESS; // Your USDT receiving address for Binance Smart Chain (BEP20)
-
-      // Create CoinPay payment request
-      const response = await axios.post('https://api.coinpay.com/v1/payments', {
-        amount: parsedAmount,
-        currency: 'USDT',
-        address: usdtAddress,
-        userId: userId,
-        network: 'BSC', // Specify Binance Smart Chain network
-      }, {
-        headers: {
-          'Authorization': `Bearer ${process.env.COINPAY_API_KEY}`,
-        }
-      });
-
-      const paymentRequest = response.data;
-      paymentId = paymentRequest.id;
-      transactionHash = paymentRequest.txHash;
-
-      // For demo, simulate transaction sending
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate transaction time
-
-    } else {
-      return res.status(400).json({ error: 'Unsupported currency' });
+    if (response.data.error !== 'ok') {
+      throw new Error(response.data.error);
     }
 
-    res.json({ message: 'Payment processed successfully', paymentId, transactionHash });
+    const paymentRequest = response.data.result;
+    const paymentId = paymentRequest.txn_id;
+
+    res.json({ message: 'Payment processed successfully', paymentId });
 
   } catch (error) {
-    console.error('Error processing payment:', error);
+    console.error('Error processing payment:', error.message);
     res.status(500).json({ error: 'Error processing payment' });
   }
 });
@@ -93,19 +81,35 @@ router.get('/payment-status/:paymentId', async (req, res) => {
   const { paymentId } = req.params;
 
   try {
-    // Check payment status from CoinPay
-    const response = await axios.get(`https://api.coinpay.com/v1/payments/${paymentId}`, {
+    const payload = {
+      cmd: 'get_tx_info',
+      key: process.env.COINPAY_API_KEY,
+      txn_id: paymentId,
+      version: 1,
+    };
+
+    const payloadString = qs.stringify(payload);
+    const hmac = crypto.createHmac('sha512', process.env.COINPAY_API_SECRET);
+    hmac.update(payloadString);
+    const signature = hmac.digest('hex');
+
+    const response = await axios.post('https://www.coinpayments.net/api.php', payloadString, {
       headers: {
-        'Authorization': `Bearer ${process.env.COINPAY_API_KEY}`,
+        'HMAC': signature,
+        'Content-Type': 'application/x-www-form-urlencoded',
       }
     });
 
-    const paymentStatus = response.data;
+    if (response.data.error !== 'ok') {
+      throw new Error(response.data.error);
+    }
 
-    res.json({ status: paymentStatus.status });
+    const paymentStatus = response.data.result;
+
+    res.json({ status: paymentStatus.status_text });
 
   } catch (error) {
-    console.error('Error checking payment status:', error);
+    console.error('Error checking payment status:', error.message);
     res.status(500).json({ error: 'Error checking payment status' });
   }
 });
